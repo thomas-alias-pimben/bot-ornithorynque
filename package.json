@@ -10,6 +10,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@atproto/api": "^0.13.23",
     "@intouchg/random-phrase": "^0.1.0",
     "ollama": "^0.5.11"
   },
