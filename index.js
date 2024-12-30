@@ -10,6 +10,3 @@ const response = await ollama.chat({
 console.log(word)
 console.log(response.message.content)
 
-fetch("https://trouve-mot.fr/api/random/2")
-    .then((response) => response.json())
-    .then((words) => console.log(words))
