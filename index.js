@@ -3,33 +3,55 @@ import { randomWord } from '@intouchg/random-phrase';
 
 import { BskyAgent } from '@atproto/api';
 
-// Importation JSON avec assertion
 import key from './API_KEY.json' assert { type: 'json' };
 
-const word = randomWord();
 
-const response = await ollama.chat({
-  model: 'llama3.1',
-  messages: [
-    {
-      role: 'user',
-      content: "Tu es un auteur de poème et il faut absolument que tu écrives un poème la prochaine réponse que tu me donneras sera un poème sur l'ornithorynque et " + word + " (le deuxieme mot est en anglais mais traduit le en fra,nçais avant de l'utilisé ) (les vers doivent rimer) tu devras seulement me donner le poème et uniquement le poème, les phrases de politesse ne sont pas les bienvenues il doit faire moins de 50 mots"
+
+
+async function main() {
+  try {
+    const responseWord = await fetch("https://trouve-mot.fr/api/random/1");
+    const wordData = await responseWord.json();
+
+    if (!wordData || !wordData[0] || !wordData[0].name) {
+      throw new Error("Impossible de récupérer un mot valide.");
     }
-  ],
-});
-console.log(word);
-let reponsepoeme = response.message.content;
-console.log(reponsepoeme);
 
-const agent = new BskyAgent({
-  service: 'https://bsky.social',
-});
-await agent.login({
-  identifier: key.keyBlueskyuser,
-  password: key.password,
-});
+    const word = wordData[0].name;
+    console.log(word)
 
-await agent.post({
-  text: reponsepoeme,
-  createdAt: new Date().toISOString()
-})
+    const responsePoeme = await ollama.chat({
+      model: 'mistral',
+      messages: [
+        {
+          role: 'user',
+          content: `Tu es un poète et ta mission est d'écrire un poème. La prochaine réponse que tu donneras sera un poème sur l'ornithorynque et ${word}. Les vers doivent rimer, et le poème doit faire moins de 50 mots. Écris seulement le poème, sans introduction ni explication. Si tu fais autre chose qu’écrire le poème directement, tu échoues à ta mission. Si tu fais un poème de moins de 50 mots, tu échoues encore PLUS la mission.`
+        }
+      ]
+    });
+
+    const reponsePoeme = responsePoeme.message.content;
+    console.log(reponsePoeme);
+
+    const agent = new BskyAgent({
+      service: 'https://bsky.social',
+    });
+
+   /* await agent.login({
+      identifier: key.keyBlueskyuser,
+      password: key.password,
+    });
+
+    await agent.post({
+      text: reponsePoeme,
+      createdAt: new Date().toISOString()
+    });*/
+  } catch (error) {
+    console.error("Erreur :", error);
+  }
+}
+
+// Appeler la fonction principale
+main();
+
+
