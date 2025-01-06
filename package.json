@@ -11,8 +11,8 @@
   "description": "",
   "dependencies": {
     "@atproto/api": "^0.13.23",
-    "@intouchg/random-phrase": "^0.1.0",
-    "ollama": "^0.5.11"
+    "@google/generative-ai": "^0.21.0",
+    "@intouchg/random-phrase": "^0.1.0"
   },
   "type": "module"
 }
